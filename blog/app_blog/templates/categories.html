@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+  <div class="container">
+    <h1 class="my-4">{{ categ }}</h1>
+
+    <ul class="list-group">
+      {% for post in category_posts %}
+        <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{% url 'article_details' post.pk %}" class="h4">{{ post.title }}</a> 
+                    
+                    - <a href="{% url 'category' post.category.name %}" class="text-muted">{{ post.category.name }}</a>
+                    
+                </div>
+                <div>
+                    <small class="text-muted">
+                        {{ post.author }} - {{ post.post_created_date.date }}
+                        {% if user.is_authenticated %}
+                            {% if user.pk == post.author.pk %}
+                            - <a href="{% url 'update_post' post.pk %}">(Edit)</a> 
+                            - <a href="{% url 'delete_post' post.pk %}">(Delete)</a>
+                            {% endif %}
+                        {% endif %}
+                    </small>
+                </div>
+            </div>    
+            
+            <p class="my-2">{{ post.snippet }}</p>
+                
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

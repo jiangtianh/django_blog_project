@@ -1,0 +1,131 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %} 
+            Jiangtian's Blog
+        {% endblock %}
+    </title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/LoveLetterEmoji.ico' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/b027f08066.js" crossorigin="anonymous"></script>
+
+  </head>
+
+  
+  <body class="d-flex flex-column min-vh-100">
+    <header>
+      <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'home' %}">Jiangtian's Blog</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              
+              {% if cat_menu %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Categories
+                </a>
+                <ul class="dropdown-menu">
+
+                  {% for cat in cat_menu %}
+                      
+                    <li><a class="dropdown-item" href="{% url 'category' cat.name %}">{{ cat.name }}</a></li>
+                      
+                  {% endfor %}
+
+                </ul>
+              </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'category-list' %}">Categories</a>
+                </li>
+              {% endif %}
+
+
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'create_post' %}">Add Post</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'add_category' %}">Add Category</a>
+                </li>             
+              {% endif %}
+
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+              {% if user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="fas fa-user"> </span> {{ user.first_name }} {{ user.last_name }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  {% if user.profile.id %}
+                  <li><a class="dropdown-item" href="{% url 'show_profile_page' user.profile.id %}">Show Profile Page</a></li>
+                  {% endif %}
+                  <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Account Setting</a></li>
+                  {% if user.profile.id %}
+                  <li><a class="dropdown-item" href="{% url 'edit_profile_page' user.profile.id %}">Edit Profile</a></li>
+                  {% else %}
+                  <li><a class="dropdown-item" href="{% url 'create_profile_page' %}">Create Profile</a></li>
+                  {% endif %}
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+              </li>
+
+              {% else %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Login
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    
+                    <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                    
+                  </ul>
+                </li>
+              {% endif %}
+            </ul>
+
+            
+          </div>
+        </div>
+      </nav>
+    </header>
+
+
+    <main class="flex-grow-1">
+      <div class="container mb-4">
+          <br/>
+          {% block content %}
+          {% endblock %}
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+
+    <footer class="bg-body-tertiary py-3 mt-auto" data-bs-theme="dark">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-6">
+                  <p class="text-muted mb-0">© 2021 My Blog. All rights reserved.</p>
+              </div>
+          </div>
+      </div>
+    </footer>
+
+  </body>
+
+  
+
+
+
+</html>

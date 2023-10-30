@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Blog Categories{% endblock %}
+
+
+{% block content %}
+
+<div class="container my-5">
+    <h1 class="mb-4">Blog Categories</h1>
+
+    <div class="row">
+        {% for cat in cat_menu_list %}
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <h4> 
+                            <a href="{% url 'category' cat %}" class="text-muted">{{ cat }}</a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+</div>
+
+
+{% endblock %}

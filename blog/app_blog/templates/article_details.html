@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+{{ post.title_tag }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ post.title }}</h1>
+            <small class="text-muted">
+                By: {{ post.author.first_name }} {{ post.author.last_name }}<br>
+                Created on: {{ post.post_created_date }}<br>
+                Last updated: {{ post.post_updated_date }}<br>
+                {% if user.is_authenticated %}
+                    {% if user.pk == post.author.pk %}
+                        <a href="{% url 'update_post' post.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="{% url 'delete_post' post.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    {% endif %}
+                {% endif %}
+            </small>
+            <hr>
+            {% if post.header_image %}
+                <img src="{{ post.header_image.url }}">
+                <hr>
+            {% endif %}
+            {{ post.body|safe }}
+            <hr>
+
+            
+            <div>
+                <form action="{% url 'like_post' post.pk %}" method="POST">
+                    {% csrf_token %}
+                    {% if user.is_authenticated %}
+                        {% if liked %}
+                            <button type="submit", name="post_id", value="{{ post.id }}", class="btn btn-danger btn-sm">
+                                Unlike
+                            </button>
+                        {% else %}
+                            <button type="submit", name="post_id", value="{{ post.id }}", class="btn btn-primary btn-sm">
+                                Like
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        <small><a href="{% url 'login' %}">Login</a> to like the post</small><br/>
+                    {% endif %}
+                        {{ post.total_likes }} people liked this post
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="col-md-4">
+    <div class="card mb-3">
+        <div class="card-body">
+            {% if post.author.profile.profile_pic %}
+            <img src="{{ post.author.profile.profile_pic.url }}" width="200" height="200">
+            {% else %}  
+            <img src="{% static 'images/default_profile_pic.png' %}" width="200" height="200">
+            {% endif %}
+            <br><br>
+            <h5 class="card-title">{{ post.author.first_name }} {{ post.author.last_name }}</h5>
+                    <p class="card-text">{{ post.author.profile.bio }}</p>
+                    <p class="card-text"><small class="text-muted">Member since {{ post.author.date_joined }}</small></p>
+                    <hr>
+                    <p class="card-text">
+                        {% if post.author.profile.website_url %}
+                            <button type="button" class="btn btn-secondary btn-sm">
+                                <a href="{{ post.author.profile.website_url }}" style="color: white;"><i class="fa-solid fa-house"></i></a>
+                            </button>       
+                        {% endif %}
+                        {% if post.author.profile.facebook_url %}
+                            <button type="button" class="btn btn-secondary btn-sm">
+                                <a href="{{ post.author.profile.facebook_url }}" style="color: white;"><i class="fa-brands fa-facebook"></i></a>
+                            </button>    
+                        {% endif %}
+                        {% if post.author.profile.twitter_url %}
+                            <button type="button" class="btn btn-secondary btn-sm">
+                                <a href="{{ post.author.profile.twitter_url }}" style="color: white;"><i class="fa-brands fa-x-twitter"></i></a>
+                            </button>   
+                        {% endif %}
+                        {% if post.author.profile.instagram_url %}
+                            <button type="button" class="btn btn-secondary btn-sm">
+                                <a href="{{ post.author.profile.instagram_url }}" style="color: white;"><i class="fa-brands fa-instagram"></i></a>
+                            </button>   
+                        {% endif %}
+                        {% if post.author.profile.pinterest_url %}
+                            <button type="button" class="btn btn-secondary btn-sm">
+                                <a href="{{ post.author.profile.pinterest_url }}" style="color: white;"><i class="fa-brands fa-pinterest"></i></a>
+                            </button>   
+                        {% endif %}
+                    </p>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Comments...</h2>
+            {% if not post.comments.all %}
+                <p>No comments yet.</p>
+            {% else %}
+                {% for comment in post.comments.all %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ comment.user.first_name }} {{ comment.user.last_name }}</h5>
+                            <p class="card-text">{{ comment.body }}</p>
+                            <p class="card-text"><small class="text-muted">{{ comment.date_added }}</small></p>
+                            {% if user.is_authenticated and user == comment.user %}
+                                <form method="post" action="{% url 'delete_comment' comment.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if user.is_authenticated %}
+                <h2>Add a Comment</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.body }}
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </form>
+            {% else %}
+                <p><a href="{% url 'login' %}">Login</a> to make a comment.</p>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+        
+        
+
+  
+
+
+
+
+
